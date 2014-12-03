@@ -21,6 +21,13 @@ NSString *const kGPUImageThreeInputTextureVertexShaderString = SHADER_STRING
  }
 );
 
+@interface GPUImageThreeInputFilter() {
+    int endedCount;
+
+}
+
+@end
+
 @implementation GPUImageThreeInputFilter
 
 #pragma mark -
@@ -305,6 +312,8 @@ NSString *const kGPUImageThreeInputTextureVertexShaderString = SHADER_STRING
         }
     }
     
+    //NSLog(@"Frames Received %d-%d-%d", hasReceivedFirstFrame, hasReceivedSecondFrame, hasReceivedThirdFrame);
+    //usleep(10000);
     // || (hasReceivedFirstFrame && secondFrameCheckDisabled) || (hasReceivedSecondFrame && firstFrameCheckDisabled)
     if ((hasReceivedFirstFrame && hasReceivedSecondFrame && hasReceivedThirdFrame) || updatedMovieFrameOppositeStillImage)
     {
@@ -314,7 +323,7 @@ NSString *const kGPUImageThreeInputTextureVertexShaderString = SHADER_STRING
             -1.0f,  1.0f,
             1.0f,  1.0f,
         };
-        
+        //NSLog(@"Frames Ready %d %f", textureIndex, CMTimeGetSeconds(frameTime));
         [self renderToTextureWithVertices:imageVertices textureCoordinates:[[self class] textureCoordinatesForRotation:inputRotation]];
         
         [self informTargetsAboutNewFrameAtTime:frameTime];
@@ -322,6 +331,20 @@ NSString *const kGPUImageThreeInputTextureVertexShaderString = SHADER_STRING
         hasReceivedFirstFrame = NO;
         hasReceivedSecondFrame = NO;
         hasReceivedThirdFrame = NO;
+    }
+}
+
+- (void)endProcessing
+{
+    endedCount ++;
+    if (!isEndProcessing && endedCount >= 3)
+    {
+        isEndProcessing = YES;
+        
+        for (id<GPUImageInput> currentTarget in targets)
+        {
+            [currentTarget endProcessing];
+        }
     }
 }
 
