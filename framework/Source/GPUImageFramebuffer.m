@@ -37,7 +37,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 {
     if (!(self = [super init]))
     {
-		return nil;
+        return nil;
     }
     
     _textureOptions = fboTextureOptions;
@@ -45,7 +45,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
     framebufferReferenceCount = 0;
     referenceCountingDisabled = NO;
     _missingFramebuffer = onlyGenerateTexture;
-
+    
     if (_missingFramebuffer)
     {
         runSynchronouslyOnVideoProcessingQueue(^{
@@ -65,9 +65,9 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 {
     if (!(self = [super init]))
     {
-		return nil;
+        return nil;
     }
-
+    
     GPUTextureOptions defaultTextureOptions;
     defaultTextureOptions.minFilter = GL_LINEAR;
     defaultTextureOptions.magFilter = GL_LINEAR;
@@ -76,7 +76,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
     defaultTextureOptions.internalFormat = GL_RGBA;
     defaultTextureOptions.format = GL_BGRA;
     defaultTextureOptions.type = GL_UNSIGNED_BYTE;
-
+    
     _textureOptions = defaultTextureOptions;
     _size = framebufferSize;
     framebufferReferenceCount = 0;
@@ -97,12 +97,12 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
     defaultTextureOptions.internalFormat = GL_RGBA;
     defaultTextureOptions.format = GL_BGRA;
     defaultTextureOptions.type = GL_UNSIGNED_BYTE;
-
+    
     if (!(self = [self initWithSize:framebufferSize textureOptions:defaultTextureOptions onlyTexture:NO]))
     {
-		return nil;
+        return nil;
     }
-
+    
     return self;
 }
 
@@ -132,7 +132,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
 {
     runSynchronouslyOnVideoProcessingQueue(^{
         [GPUImageContext useImageProcessingContext];
-    
+        
         glGenFramebuffers(1, &framebuffer);
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         
@@ -185,17 +185,17 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
         else
         {
             [self generateTexture];
-
+            
             glBindTexture(GL_TEXTURE_2D, _texture);
             
             glTexImage2D(GL_TEXTURE_2D, 0, _textureOptions.internalFormat, (int)_size.width, (int)_size.height, 0, _textureOptions.format, _textureOptions.type, 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
         }
         
-        #ifndef NS_BLOCK_ASSERTIONS
+#ifndef NS_BLOCK_ASSERTIONS
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         NSAssert(status == GL_FRAMEBUFFER_COMPLETE, @"Incomplete filter FBO: %d", status);
-        #endif
+#endif
         
         glBindTexture(GL_TEXTURE_2D, 0);
     });
@@ -211,7 +211,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
             glDeleteFramebuffers(1, &framebuffer);
             framebuffer = 0;
         }
-
+        
         
         if ([GPUImageContext supportsFastTextureUpload] && (!_missingFramebuffer))
         {
@@ -233,7 +233,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
         {
             glDeleteTextures(1, &_texture);
         }
-
+        
     });
 }
 
@@ -265,7 +265,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size);
     {
         return;
     }
-
+    
     NSAssert(framebufferReferenceCount > 0, @"Tried to overrelease a framebuffer, did you forget to call -useNextFrameForImageCapture before using -imageFromCurrentFramebuffer?");
     framebufferReferenceCount--;
     if (framebufferReferenceCount < 1)
@@ -441,7 +441,7 @@ void dataProviderUnlockCallback (void *info, const void *data, size_t size)
 
 - (GLuint)texture;
 {
-//    NSLog(@"Accessing texture: %d from FB: %@", _texture, self);
+    //    NSLog(@"Accessing texture: %d from FB: %@", _texture, self);
     return _texture;
 }
 
